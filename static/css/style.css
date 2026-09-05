@@ -176,6 +176,72 @@ h1, .brand {
     border-top: 1px solid var(--line);
 }
 
+/* Skills section spacing and heading alignment */
+.skills {
+    padding: 4rem 0 5rem;
+}
+
+.skills h1 {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/*
+Flexbox is used to arrange the skill cards in a row, flex-wrap is used so that
+cards move to the next line when there is not enough horizontal space making 
+the section look better on smaller screens.
+*/
+.container-skills {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    justify-content: center;
+}
+
+/*
+All skill cards share the same size and styling, flexbox centers the logo and 
+skill name vertically and horizontally.
+*/
+.card-skill {
+    width: 150px;
+    height: 150px;
+    background-color: var(--ink);
+    color: var(--paper);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+/*
+The hover effect provides visual feedback when the user
+moves the cursor over a skill.
+*/
+.card-skill:hover {
+    transform: translateY(-8px);
+    background-color: var(--accent);
+}
+
+/*
+A fixed logo area keeps different logo images consistent even when their 
+dimensions are different.
+object-fit: contain prevents the logos from being cropped.
+*/
+.skill-logo {
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+}
+
+.card-skill p {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
 @media (max-width: 600px) {
     .hero-grid {
         grid-template-columns: 1fr;
