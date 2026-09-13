@@ -296,6 +296,9 @@ Gives the supporting information muted color
     color: var(--text-muted);
 }
 
+/*
+Experience section styling
+*/
 .experience-section {
     padding: 4rem 0;
     border-top: 1px solid var(--line);
@@ -349,6 +352,75 @@ Gives the supporting information muted color
     font-size: 0.85rem;
     font-weight: 600;
 }
+
+/*
+Project section styling
+*/
+
+.project-section {
+    padding: 4rem 0;
+    border-top: 1px solid var(--line);
+}
+
+.project-section h1 {
+    margin: 0.4rem 0 1.5rem;
+    font-size: 2rem;
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,  400px);
+    justify-content: center;
+    gap: 1rem;
+}
+
+.project-card {
+    padding: 1.25rem;
+    background-color: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+}
+
+.project-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    margin-bottom: 1rem;
+}
+
+.project-card h2 {
+    margin: 0.5rem 0;
+    font-size: 1.25rem;
+}
+
+.project-description {
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.project-links {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: auto;
+}
+
+.project-card a {
+    padding: 0.5rem 0.8rem;
+    background-color: var(--accent);
+    color: var(--paper);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-size: 0.85rem;
+
+}
+
+.empty-state {
+    color: var(--text-muted);
+}
+
 
 @media (max-width: 600px) {
     .hero-grid {
