@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from main.models import Experience
+from main.models import Experience, Project
 
 
 class MainTest(TestCase):
@@ -56,3 +56,43 @@ class MainTest(TestCase):
         self.assertFalse(self.experience.is_ongoing)
         self.assertContains(response, "Selesai")
         self.assertNotContains(response, "Sedang berlangsung")
+
+class ProjectTest(TestCase):
+    # Create a sample Project object that will be used by the tests.
+    def setUp(self):
+        self.project = Project.objects.create(
+            title="Website Portofolio",
+            description="Website portofolio yang dibuat menggunakan framework Django",
+            image="projects/projtwo.png",
+            project_url="https://github.com/",
+            live_demo="",
+        )
+
+    # Test that the Project URL is accessible and uses the correct template.
+    def test_project_url_is_accessible(self):
+        response = self.client.get(reverse("main:show_project"))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "project.html")
+
+    # Test that the Project model's string representation returns its title.
+    def test_project_model(self):
+        self.assertEqual(str(self.project), "Website Portofolio")
+
+    # Test that Project data is displayed correctly on the Project page.
+    def test_project_page(self):
+        response = self.client.get(reverse("main:show_project"))
+    
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "project.html")
+        self.assertContains(response, self.project.title)
+        self.assertContains(response, self.project.description)
+        self.assertContains(response, self.project.image.url)
+        self.assertContains(response, f'href="{reverse("main:show_main")}"')
+
+    # Test that the empty-state message is displayed when no Projects exist.
+    def test_empty_project_page(self):
+        Project.objects.all().delete()
+        response = self.client.get(reverse("main:show_project"))
+    
+        self.assertContains(response, "Belum ada proyek yang ditambahkan.")
