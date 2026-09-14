@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Set the page title using the name passed from the Django view. -->
     <title>Project - {{ name }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +14,7 @@
     <header class="site-header">
         <div class="container">
             <a href="{% url 'main:show_main' %}" class="brand">{{ name }}</a>
+            <!-- Navigation bar shared with the other portfolio pages. -->
             <nav>
                 <a href="{% url 'main:show_main' %}">Profile</a>
                 <a href="{% url 'main:show_experience' %}">Experience</a>
@@ -22,16 +24,19 @@
     </header>
 
     <main>
+        <!-- Project section that displays project data retrieved from the database. -->
         <section class="project-section" id="project">
             <div class="container">
                 <p class="section-kicker">Proyek saya sejauh ini</p>
                 <h1>Project</h1>
 
                 <div class="project-grid">
+                    <!-- Loop through every Project object passed by the Django view. -->
                     {% for project in project_list %}
                         <article class="project-card">
+                            <!-- Display the project's uploaded image and use its title as alt text. -->
                             <img src="{{ project.image.url }}" alt="{{ project.title }}">
-
+                            <!-- Display the project title and description from the database. -->
                             <h2>{{ project.title }}</h2>
 
                             <p class="project-description">
@@ -39,13 +44,15 @@
                             </p>
 
                             <div class="project-links">
+                                <!-- Display the Live Demo button only when a live demo URL exists. -->
                                 {% if project.live_demo %}
                                     <a href="{{ project.live_demo }}" target="_blank">Live Demo</a>
                                 {% endif %}
-
+                                <!-- Link to the project's repository or project page. -->
                                 <a href="{{ project.project_url }}" target="_blank">Open</a>
                             </div>
                         </article>
+                    <!-- Display an empty-state message when no Project objects exist. -->
                     {% empty %}
                         <p class="empty-state">
                             Belum ada proyek yang ditambahkan.

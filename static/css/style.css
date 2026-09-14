@@ -357,16 +357,19 @@ Experience section styling
 Project section styling
 */
 
+/* Sets the overall spacing and top border of the Project section. */
 .project-section {
     padding: 4rem 0;
     border-top: 1px solid var(--line);
 }
 
+/* Project section heading styling. */
 .project-section h1 {
     margin: 0.4rem 0 1.5rem;
     font-size: 2rem;
 }
 
+/* Creates a centered grid for the project cards. */
 .project-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit,  400px);
@@ -374,6 +377,7 @@ Project section styling
     gap: 1rem;
 }
 
+/* Styles each individual project card. */
 .project-card {
     padding: 1.25rem;
     background-color: #fff;
@@ -383,6 +387,7 @@ Project section styling
     flex-direction: column;
 }
 
+/* Set the size and cropping of project images. */
 .project-card img {
     width: 100%;
     height: 180px;
@@ -390,16 +395,19 @@ Project section styling
     margin-bottom: 1rem;
 }
 
+/* Styles the project title inside each card. */
 .project-card h2 {
     margin: 0.5rem 0;
     font-size: 1.25rem;
 }
 
+/* Styles the project description text. */
 .project-description {
     color: var(--text-muted);
     line-height: 1.6;
 }
 
+/* Aligns the project links to the bottom-right of the card. */
 .project-links {
     display: flex;
     justify-content: flex-end;
@@ -407,6 +415,7 @@ Project section styling
     margin-top: auto;
 }
 
+/* Styles the links as compact buttons. */
 .project-card a {
     padding: 0.5rem 0.8rem;
     background-color: var(--accent);
@@ -417,6 +426,7 @@ Project section styling
 
 }
 
+/* Styles the message displayed when no projects are available. */
 .empty-state {
     color: var(--text-muted);
 }
