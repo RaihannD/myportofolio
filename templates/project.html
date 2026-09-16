@@ -35,7 +35,11 @@
                     {% for project in project_list %}
                         <article class="project-card">
                             <!-- Display the project's uploaded image and use its title as alt text. -->
-                            <img src="{{ project.image.url }}" alt="{{ project.title }}">
+                            <img src="{{ project.image }}" alt="{{ project.title }}">
+                            <!-- Display project tech stack-->
+                            <span class="tech-stack">
+                                {{ project.tech_stack }}
+                            </span>
                             <!-- Display the project title and description from the database. -->
                             <h2>{{ project.title }}</h2>
 
