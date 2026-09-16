@@ -63,14 +63,15 @@ class ProjectTest(TestCase):
         self.project = Project.objects.create(
             title="Website Portofolio",
             description="Website portofolio yang dibuat menggunakan framework Django",
-            image="projects/projtwo.png",
+            tech_stack = "Python, Django, HTML, CSS",
+            image="https://example.com/image.png",
             project_url="https://github.com/",
             live_demo="",
         )
 
     # Test that the Project URL is accessible and uses the correct template.
     def test_project_url_is_accessible(self):
-        response = self.client.get(reverse("main:show_project"))
+        response = self.client.get(reverse("main:show_projects"))
         
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "project.html")
@@ -81,18 +82,18 @@ class ProjectTest(TestCase):
 
     # Test that Project data is displayed correctly on the Project page.
     def test_project_page(self):
-        response = self.client.get(reverse("main:show_project"))
+        response = self.client.get(reverse("main:show_projects"))
     
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "project.html")
         self.assertContains(response, self.project.title)
         self.assertContains(response, self.project.description)
-        self.assertContains(response, self.project.image.url)
+        self.assertContains(response, self.project.image)
         self.assertContains(response, f'href="{reverse("main:show_main")}"')
 
     # Test that the empty-state message is displayed when no Projects exist.
     def test_empty_project_page(self):
         Project.objects.all().delete()
-        response = self.client.get(reverse("main:show_project"))
+        response = self.client.get(reverse("main:show_projects"))
     
         self.assertContains(response, "Belum ada proyek yang ditambahkan.")
