@@ -28,9 +28,10 @@ class Experience(models.Model):
 class Project(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
-    image = models.ImageField(upload_to="projects/")
-    project_url = models.URLField()
-    live_demo = models.URLField(blank=True)
+    tech_stack = models.CharField(max_length=255)
+    image = models.URLField(blank=True, max_length=500)
+    project_url = models.URLField(blank=True)
+    live_demo = models.URLField(blank=True, max_length=500)
 
     def __str__(self):
             return self.title
