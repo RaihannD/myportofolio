@@ -5,12 +5,12 @@
 }
 
 :root {
-    --ink: #1c1917;
-    --paper: #faf6f0;
-    --accent: #d95d39;
-    --accent-dark: #a8442a;
-    --line: #e3d9c9;
-    --text-muted: #6b6459;
+    --ink: #0a0f1a;
+    --paper: #f5f7fa;
+    --accent: #4f6dff;
+    --accent-dark: #3b55cc;
+    --line: #d8dde6;
+    --text-muted: #687386;
     --radius: 4px;
 }
 
@@ -31,33 +31,66 @@ h1, .brand {
     padding: 0 1.5rem;
 }
 
+/* Navbar styling */
 .site-header {
-    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 20px;
+    z-index: 1000;
+    width: 100%;
+    padding: 0 24px;
 }
 
-.site-header .container {
+.navbar {
+    max-width: 1000px;
+    margin: 0 auto;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 1.25rem 1.5rem;
+    justify-content: space-between;
+    padding: 12px 14px 12px 22px;
+    background-color: var(--accent-dark);
+    border-radius: 999px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
 }
 
 .brand {
-    font-size: 1.3rem;
+    color: var(--paper);
+    text-decoration: none;
+    font-size: 1.05rem;
     font-weight: 700;
-    color: var(--ink);
-    text-decoration: none;
+    letter-spacing: -0.02em;
 }
 
-.site-header nav {
+.navbar nav {
     display: flex;
-    gap: 2rem;
+    align-items: center;
+    gap: 4px;
 }
 
-.site-header nav a {
-    color: var(--ink);
+.navbar nav a {
+    padding: 9px 16px;
+
+    color: var(--paper);
     text-decoration: none;
-    font-size: 0.95rem;
+
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    border-radius: 999px;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.navbar nav a:hover {
+    color: var(--ink);
+    background-color: var(--paper);
+    transform: translateY(-1px);
+}
+
+.navbar nav a:active {
+    transform: translateY(0);
 }
 
 .hero {
@@ -418,6 +451,19 @@ Experience section styling
     font-weight: 600;
 }
 
+/* animation for project card and experience card */
+.experience-card, .project-card {
+  transition: 
+    transform 0.4s ease,
+    box-shadow 0.4s ease,
+    filter 0.4s ease;
+}
+
+.experience-card:hover, .experience-card:focus-visible, .project-card:hover, .project-card:focus-visible {
+  box-shadow: 0 25px 30px rgba(0, 0, 0, 0.3);
+  filter: brightness(1.1);
+}
+
 .form-group select {
     width: 100%;
     box-sizing: border-box;
@@ -607,7 +653,7 @@ Styles Project and Experience Form
     display: inline-block;
     height: fit-content;
     border: 0;
-    border-radius: var(--radius);
+    border-radius: 50px;
     padding: 0.65rem 1rem;
     background: var(--accent);
     color: white;
@@ -615,6 +661,11 @@ Styles Project and Experience Form
     font: inherit;
     font-weight: 700;
     text-decoration: none;
+}
+
+.button:hover {
+    opacity: 1;
+    background: #1c1917;
 }
 
 /* styles delete action*/
@@ -703,39 +754,45 @@ Styles Project and Experience Form
     background: #b42318;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .experience-card:hover, .experience-card:focus-visible, .project-card:hover, .project-card:focus-visible {
+    transform: scale(1.08) translateY(-12px);
+  }
+}
+
 @media (max-width: 600px) {
     .hero-grid {
         grid-template-columns: 1fr;
         grid-template-areas:
-            "identity"
-            "photo"
+        "identity"
+        "photo"
             "details";
     }
 
     .hero-photo {
         max-width: 220px;
     }
-
+    
     .social-links {
         justify-content: flex-start;
     }
-
+    
     /* Makes the education items arrange in a column on smaller screens*/
     .education-list {
         flex-direction: column;
         gap: 1.5rem;
     }
-
+    
     .project-header {
         align-items: flex-start;
         flex-direction: column;
     }
-
+    
     .project-add-button {
         width: 100%;
         justify-content: center;
     }
-
+    
     .project-search {
         flex-direction: column;
     }
@@ -743,7 +800,7 @@ Styles Project and Experience Form
     .project-search .button {
         width: 100%;
     }
-
+    
     .project-delete-modal {
         align-items: flex-end;
         padding: 0;
