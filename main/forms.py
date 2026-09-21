@@ -3,6 +3,8 @@ from django.forms import ModelForm, TextInput, Textarea, URLInput, DateTimeInput
 from main.models import Project, Experience
 
 class ProjectForm(ModelForm):
+    """Form for creating and updating Project model objects."""
+
     class Meta:
         model = Project
         fields = [
@@ -59,8 +61,12 @@ class ProjectForm(ModelForm):
         }
 
 class ExperienceForm(ModelForm):
+    """Form for creating and updating Experience model objects."""
+
     class Meta:
         model = Experience
+
+        # started_at is excluded because it is automatically generated
         fields = [
             "title",
             "description",

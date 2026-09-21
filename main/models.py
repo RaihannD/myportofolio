@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 
 class Experience(models.Model):
+    """Store information about a portfolio experience."""
     EXPERIENCE_CHOICES = [
         ('internship', 'Internship'),
         ('research', 'Research'),
@@ -23,9 +24,11 @@ class Experience(models.Model):
     
     @property
     def is_ongoing(self):
+        """Return True when the experience does not have an end date."""
         return self.ended_at is None
 
 class Project(models.Model):
+    """Store information about a portfolio project."""
     title = models.CharField(max_length=255)
     description = models.TextField()
     tech_stack = models.CharField(max_length=255)

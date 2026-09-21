@@ -21,6 +21,7 @@ def show_main(request):
 
 
 def show_experience(request):
+    """Display experiences retrieved through the JSON endpoint."""
     json_response = get_experience_json(request)
 
     experiences = serializers.deserialize(
@@ -38,6 +39,7 @@ def show_experience(request):
     return render(request, "experience.html", context)
 
 def create_experience(request):
+    """Display and process the form for creating an experience."""
     form = ExperienceForm(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
@@ -52,6 +54,7 @@ def create_experience(request):
     return render(request, "experience_form.html", context)
 
 def update_experience(request, experience_id):
+    """Display and process the form for updating an existing experience."""
     experience = get_object_or_404(Experience, pk=experience_id)
     form = ExperienceForm(request.POST or None, instance=experience)
 
@@ -68,6 +71,7 @@ def update_experience(request, experience_id):
     return render(request, "experience_form.html", context)
 
 def delete_experience(request, experience_id):
+    """Delete an experience after receiving a POST request."""
     experience = get_object_or_404(Experience, pk=experience_id)
 
     if request.method == "POST":
@@ -79,6 +83,7 @@ def delete_experience(request, experience_id):
 
 
 def get_experience_json(request):
+    """Return experience data as JSON, optionally filtered by title."""
     title_query = request.GET.get("title", "").strip()
     experiences = Experience.objects.all()
 
@@ -89,6 +94,7 @@ def get_experience_json(request):
     return HttpResponse(experiences_json, content_type="application/json")
 
 def show_projects(request):
+    """Display projects retrieved through the JSON endpoint."""
     json_response = get_projects_json(request)
 
     projects = serializers.deserialize(
@@ -106,6 +112,7 @@ def show_projects(request):
     return render(request, "project.html", context)
 
 def create_project(request):
+    """Display and process the form for creating a project."""
     form = ProjectForm(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
@@ -120,6 +127,7 @@ def create_project(request):
     return render(request, "projects_form.html", context)
 
 def delete_project(request, project_id):
+    """Delete a project after receiving a POST request."""
     project = get_object_or_404(Project, pk=project_id)
 
     if request.method == "POST":
@@ -130,6 +138,7 @@ def delete_project(request, project_id):
     return redirect("main:show_projects")
 
 def get_projects_json(request):
+    """Return experience data as JSON, optionally filtered by title."""
     title_query = request.GET.get("title", "").strip()
     projects = Project.objects.all()
 

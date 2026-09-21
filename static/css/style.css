@@ -558,7 +558,7 @@ Project section styling
 }
 
 /*
-Styles Project Form
+Styles Project and Experience Form
 */
 
 .project-form {
@@ -698,7 +698,7 @@ Styles Project Form
     margin-top: 1.5rem;
 }
 
-/* styles delete project button*/
+/* styles delete project button */
 .button-danger {
     background: #b42318;
 }
