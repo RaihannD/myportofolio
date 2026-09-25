@@ -754,6 +754,29 @@ Styles Project and Experience Form
     background: #b42318;
 }
 
+/* styles star */
+.star-form {
+    display: inline;
+}
+
+.button-star {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--ink);
+}
+
+.button-star.is-starred {
+    background: var(--accent);
+}
+
+.star-count {
+    padding: 0.05rem 0.4rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.25);
+    font-size: 0.8rem;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .experience-card:hover, .experience-card:focus-visible, .project-card:hover, .project-card:focus-visible {
     transform: scale(1.08) translateY(-12px);
