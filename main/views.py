@@ -6,6 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+import datetime
 
 
 def register(request):
@@ -26,20 +27,26 @@ def login_user(request):
     form = AuthenticationForm(request, data=request.POST or None)
 
     if request.method == "POST" and form.is_valid():
-        login(request, form.get_user())
-        return redirect("main:show_main")
+        user = form.get_user()
+        login(request, user)
+        response = redirect("main:show_main")
+        response.set_cookie('last_login', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        return response
 
     context = {
-        "name": "Burhan",
+        "name": "Raihan",
         "form": form,
     }
     return render(request, "login.html", context)
 
 def logout_user(request):
     logout(request)
-    return redirect("main:show_main")
+    response = redirect("main:show_main")
+    response.delete_cookie('last_login')
+    return response
 
 def show_main(request):
+    last_login = request.COOKIES.get('last_login', 'Belum ada sesi login / Cookie tidak ditemukan')
     context = {
         "name": "Raihan",
         "fullname": "Raihan Daffa Aprilianda",
@@ -49,6 +56,7 @@ def show_main(request):
             "CS student at Universitas Indonesia currently on my 3rd semester. "
             "Wishing to be good at programming someday."
         ),
+        "last_login": last_login,
     }
     return render(request, "index.html", context)
 
