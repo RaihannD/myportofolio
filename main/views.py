@@ -186,6 +186,25 @@ def create_project(request):
     return render(request, "projects_form.html", context)
 
 @login_required(login_url="/login/")
+def update_project(request, project_id):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+    project = get_object_or_404(Project, pk=project_id)
+    form = ProjectForm(request.POST or None, instance=project)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Proyek berhasil diupdate!")
+        return redirect("main:show_projects")
+
+    context = {
+            "name": "Raihan",
+            "form": form,
+            "project": project,
+        }
+    return render(request, "project_form.html", context)
+
+@login_required(login_url="/login/")
 def delete_project(request, project_id):
     """Delete a project after receiving a POST request."""
     if not request.user.is_superuser:
