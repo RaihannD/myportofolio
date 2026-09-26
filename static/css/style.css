@@ -52,6 +52,23 @@ h1, .brand {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
 }
 
+/* logged in user username styling */
+.nav-user {
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    padding: 7px 13px;
+    margin-left: 4px;
+    color: var(--ink);
+    background-color: var(--paper);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+/* portofolio name */
 .brand {
     color: var(--paper);
     text-decoration: none;
@@ -60,6 +77,7 @@ h1, .brand {
     letter-spacing: -0.02em;
 }
 
+/* more navbar styling */
 .navbar nav {
     display: flex;
     align-items: center;
@@ -83,6 +101,7 @@ h1, .brand {
         transform 0.2s ease;
 }
 
+/* navbar hover & active properties */
 .navbar nav a:hover {
     color: var(--ink);
     background-color: var(--paper);
@@ -93,6 +112,7 @@ h1, .brand {
     transform: translateY(0);
 }
 
+/* hero section styling */
 .hero {
     padding: 4.5rem 0 5rem;
 }
@@ -158,6 +178,7 @@ h1, .brand {
     flex-wrap: wrap;
 }
 
+/* styling for social links */
 .social-link {
     display: inline-block;
     font-size: 0.85rem;
@@ -170,6 +191,7 @@ h1, .brand {
     transition: background-color 0.2s ease;
 }
 
+/* social link hover properties */ 
 .social-link:hover {
     background-color: var(--accent);
 }
@@ -202,6 +224,7 @@ h1, .brand {
     border: 3px solid var(--ink);
 }
 
+/* site footer styling */
 .site-footer {
     padding: 1.5rem;
     color: var(--text-muted);
@@ -842,5 +865,15 @@ Styles Project and Experience Form
     .project-delete-modal__actions .button {
         width: 100%;
         text-align: center;
+    }
+    
+}
+
+/* when screen gets smaller remove the logged in user
+   username from being displayed 
+*/
+@media (max-width:650px) {
+    .nav-user{
+        display: none;
     }
 }

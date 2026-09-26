@@ -10,6 +10,7 @@
                 <p class="section-kicker">Perjalanan saya sejauh ini</p>
                 <div class="experience-header">
                     <h1>Experience</h1>
+                    <!-- limits add experience to superusers -->
                     {% if user.is_superuser %}
                         <a href="{% url 'main:create_experience' %}"
                         class="button experience-add-button">
@@ -19,6 +20,7 @@
                     {% endif %}
                 </div>
 
+                <!-- search experience  -->
                 <form method="get"
                       action="{% url 'main:show_experience' %}"
                       class="experience-search">
@@ -31,6 +33,7 @@
                     <button type="submit" class="button">Cari</button>
                 </form>
 
+                <!-- Display experience card and its attributes -->
                 <div class="experience-grid">
                     {% for experience in experience_list %}
                         <article class="experience-card">
@@ -54,7 +57,8 @@
                             {% endif %}
 
                             <div class="experience-actions">
-                                {% if user.is_superuser %}
+                                <!-- limits editing of experience to superusers and editors -->
+                                {% if user.is_superuser or is_editor%}
                                     <a href="{% url 'main:update_experience' experience.id %}"
                                         class="button">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">

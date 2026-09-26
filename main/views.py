@@ -66,6 +66,7 @@ def show_main(request):
 def show_experience(request):
     """Display experiences retrieved through the JSON endpoint."""
     json_response = get_experience_json(request)
+    is_editor = request.user.groups.filter(name="Editor").exists()
 
     experiences = serializers.deserialize(
         "json",
@@ -78,6 +79,7 @@ def show_experience(request):
         "name": "Raihan",
         "experience_list": experiences,
         "title_query": title_query,
+        "is_editor": is_editor,
     }
     return render(request, "experience.html", context)
 
@@ -103,7 +105,7 @@ def create_experience(request):
 @login_required(login_url="/login/")
 def update_experience(request, experience_id):
     """Display and process the form for updating an existing experience."""
-    if not request.user.is_superuser:
+    if not request.user.groups.filter(name="Editor").exists() and not request.user.is_superuser:
         raise PermissionDenied
     
     experience = get_object_or_404(Experience, pk=experience_id)
@@ -152,6 +154,8 @@ def show_projects(request):
     """Display projects retrieved through the JSON endpoint."""
     json_response = get_projects_json(request)
 
+    is_editor = request.user.groups.filter(name="Editor").exists()
+
     projects = serializers.deserialize(
         "json",
         json_response.content.decode("utf-8"),
@@ -163,6 +167,7 @@ def show_projects(request):
         "name": "Raihan",
         "project_list": projects,
         "title_query": title_query,
+        "is_editor": is_editor,
     }
     return render(request, "project.html", context)
 
@@ -187,7 +192,8 @@ def create_project(request):
 
 @login_required(login_url="/login/")
 def update_project(request, project_id):
-    if not request.user.is_superuser:
+    """Display and process the form for updating an existing projects."""
+    if not request.user.groups.filter(name="Editor").exists() and not request.user.is_superuser:
         raise PermissionDenied
     project = get_object_or_404(Project, pk=project_id)
     form = ProjectForm(request.POST or None, instance=project)
@@ -198,11 +204,11 @@ def update_project(request, project_id):
         return redirect("main:show_projects")
 
     context = {
-            "name": "Raihan",
-            "form": form,
-            "project": project,
-        }
-    return render(request, "project_form.html", context)
+        "name": "Raihan",
+        "form": form,
+        "project": project,
+    }
+    return render(request, "projects_form.html", context)
 
 @login_required(login_url="/login/")
 def delete_project(request, project_id):
