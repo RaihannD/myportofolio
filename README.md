@@ -4,7 +4,7 @@
 
 Proyek ini merupakan *website* portofolio personal yang dikembangkan sebagai bagian dari mata kuliah Pemograman Berbasis Platform (PBP). *Website* ini menyajikan informasi dasar mengenai diri saya, riwayat pendidikan, kemampuan, serta informasi relevan lainnya.
 
-Proyek ini menggunakan Django sebagai framework web dengan menerapkan konsep Model-View-Template (MVT). Website dikembangkan menggunakan HTML dan CSS, dengan data portofolio yang disimpan dan dikelola melalui model Django. Implementasi saat ini berfokus pada penerapan operasi *CRUD (Create, Read, Update, Delete)* serta melanjutkan pembuatan website portofolio yang rapi dan responsif serta menerapkan konsep-konsep HTML5, CSS3, dan Django yang dipelajari selama sesi tutorial dan perkuliahan.
+Proyek ini menggunakan Django sebagai framework web dengan menerapkan konsep Model-View-Template (MVT). Website dikembangkan menggunakan HTML dan CSS, dengan data portofolio yang disimpan dan dikelola melalui model Django. Implementasi saat ini berfokus pada penerapan operasi *CRUD (Create, Read, Update, Delete)*, menerapkan autentikasi dan otorisasi, serta melanjutkan pembuatan website portofolio yang rapi dan responsif serta menerapkan konsep-konsep HTML5, CSS3, dan Django yang dipelajari selama sesi tutorial dan perkuliahan.
 
 ## Struktur Proyek
 ```text
@@ -140,6 +140,20 @@ Website tersebut kemudian dapat diakses melalui *local development server*.
 * Menambahkan *JSON endpoint* serta proses *serialization* dan *deserialization* data.
 * Menambahkan halaman dan komponen *form* untuk menambah dan mengubah pengalaman.
 * Menambahkan *delete confirmation modal* untuk menghapus pengalaman.
+
+### Tutorial 4
+* Mengimplementasi autentikasi (daftar, login, logout)
+* Menampilkan status login di navbar
+* Menerapkan session dan cookies
+* Mengatur hak akses pengguna
+
+### Tugas 4
+* Menerapkan peran Editor melalui Django Group atau Permission.
+* Menerapkan pembatasan hak akses di sisi server (server-side check).
+* Menyembunyikan tombol/kontrol aksi (create, update, delete) pada template bagi pengguna yang tidak berhak.
+* Mengimplementasikan view `toggle_star` (POST & `{% csrf_token %}`) untuk memberi/membatalkan star (maksimal satu star per pengguna) serta menampilkan jumlah total star dan status pengguna.
+* Memastikan endpoint JSON dari Tugas 3 tetap berfungsi tanpa membocorkan informasi sensitif.
+* Menambahkan relasi `ManyToManyField` ke model User
 
 ## Pertanyaan Reflektif
 
