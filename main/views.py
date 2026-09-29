@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied      
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, redirect, render
 import datetime
 
@@ -160,6 +161,7 @@ def show_projects(request):
         "name": "Raihan",
         "title_query": title_query,
         "is_editor": is_editor,
+        "form": ProjectForm(),
     }
     return render(request, "project.html", context)
 
@@ -201,6 +203,24 @@ def update_project(request, project_id):
         "project": project,
     }
     return render(request, "projects_form.html", context)
+
+@require_POST
+def create_project_ajax(request):
+    if not request.user.is_superuser:
+        return JsonResponse(
+            {"message": "Hanya pemilik portofolio yang dapat menambahkan proyek."},
+            status=403,
+        )
+
+    form = ProjectForm(request.POST)
+    if form.is_valid():
+        project = form.save()
+        return JsonResponse(
+            {"message": "Proyek berhasil ditambahkan.", "pk": str(project.id)},
+            status=201,
+        )
+
+    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
 
 @login_required(login_url="/login/")
 def delete_project(request, project_id):
