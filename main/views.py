@@ -98,6 +98,7 @@ def create_experience(request):
 
 @require_POST
 def create_experience_ajax(request):
+    """Create an experience through an AJAX request with superuser authorization."""
     if not request.user.is_superuser:
         return JsonResponse(
             {"message": "Hanya pemilik portofolio yang dapat menambahkan pengalaman."},
@@ -234,6 +235,7 @@ def update_project(request, project_id):
 
 @require_POST
 def create_project_ajax(request):
+    """Create a project through an AJAX request with superuser authorization."""
     if not request.user.is_superuser:
         return JsonResponse(
             {"message": "Hanya pemilik portofolio yang dapat menambahkan proyek."},

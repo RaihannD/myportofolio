@@ -4,7 +4,7 @@
 
 Proyek ini merupakan *website* portofolio personal yang dikembangkan sebagai bagian dari mata kuliah Pemograman Berbasis Platform (PBP). *Website* ini menyajikan informasi dasar mengenai diri saya, riwayat pendidikan, kemampuan, serta informasi relevan lainnya.
 
-Proyek ini menggunakan Django sebagai framework web dengan menerapkan konsep Model-View-Template (MVT). Website dikembangkan menggunakan HTML dan CSS, dengan data portofolio yang disimpan dan dikelola melalui model Django. Implementasi saat ini berfokus pada penerapan operasi *CRUD (Create, Read, Update, Delete)*, menerapkan autentikasi dan otorisasi, serta melanjutkan pembuatan website portofolio yang rapi dan responsif serta menerapkan konsep-konsep HTML5, CSS3, dan Django yang dipelajari selama sesi tutorial dan perkuliahan.
+Proyek ini menggunakan Django sebagai framework web dengan menerapkan konsep Model-View-Template (MVT). Website dikembangkan menggunakan HTML dan CSS, dengan data portofolio yang disimpan dan dikelola melalui model Django. Implementasi saat ini berfokus pada penerapan operasi *CRUD (Create, Read, Update, Delete)*, menerapkan autentikasi dan otorisasi, AJAX/JavaScript, perlindungan XSS, serta melanjutkan pembuatan website portofolio yang rapi dan responsif serta menerapkan konsep-konsep HTML5, CSS3, dan Django yang dipelajari selama sesi tutorial dan perkuliahan.
 
 ## Struktur Proyek
 ```text
@@ -141,19 +141,34 @@ Website tersebut kemudian dapat diakses melalui *local development server*.
 * Menambahkan halaman dan komponen *form* untuk menambah dan mengubah pengalaman.
 * Menambahkan *delete confirmation modal* untuk menghapus pengalaman.
 
-### Tutorial 4
+### Tutorial 04
 * Mengimplementasi autentikasi (daftar, login, logout)
 * Menampilkan status login di navbar
 * Menerapkan session dan cookies
 * Mengatur hak akses pengguna
 
-### Tugas 4
+### Tugas 04
 * Menerapkan peran Editor melalui Django Group atau Permission.
 * Menerapkan pembatasan hak akses di sisi server (server-side check).
 * Menyembunyikan tombol/kontrol aksi (create, update, delete) pada template bagi pengguna yang tidak berhak.
 * Mengimplementasikan view `toggle_star` (POST & `{% csrf_token %}`) untuk memberi/membatalkan star (maksimal satu star per pengguna) serta menampilkan jumlah total star dan status pengguna.
 * Memastikan endpoint JSON dari Tugas 3 tetap berfungsi tanpa membocorkan informasi sensitif.
 * Menambahkan relasi `ManyToManyField` ke model User
+
+### Tutorial 05
+* Mengimplementasi notifikasi Toast
+* Menampilkan data proyek dengan AJAX
+* Menerapkan *search Debouncing* pada pencarian proyek
+* Membuat modal sebagai form untuk menambahkan proyek
+* Menambahkan data proyek dengan AJAX
+* Melindungi aplikasi dari XSS
+
+### Tugas 05
+* Menampilkan data pengalaman dengan AJAX
+* Menerapkan *search Debouncing* pada pencarian pengalaman
+* Menambahkan data pengalaman dengan Modal dan AJAX
+* Menerapkan notifikasi toast
+* Melindungi aplikasi dari XSS
 
 ## Pertanyaan Reflektif
 
@@ -232,6 +247,21 @@ Ketika endpoint JSON pada view diakses, view terlebih dahulu mengambil data `Exp
 Setelah mendapatkan queryset, data tersebut diubah menjadi format JSON menggunakan fungsi `serializers.serialize()`. Hasil JSON kemudian dikembalikan menggunakan `HttpResponse` dengan `content_type="application/json"`.
 
 Serialization diperlukan karena objek model Django atau queryset yang diambil dari database tidak secara langsung berbentuk JSON. JSON hanya dapat merepresentasikan data dalam bentuk seperti object, array, string, angka, dan boolean. Dengan melakukan serialization, data model Django diubah menjadi format yang dapat dikirim melalui HTTP dan digunakan oleh aplikasi lain atau frontend.
+
+## Tugas 5
+### 1. Jelaskan apa itu debouncing dan mengapa teknik ini penting diterapkan pada fitur pencarian yang menggunakan AJAX!
+
+Debouncing adalah pengaturan yang menunda eksekusi suatu fungsi hingga pengguna berhenti melakukan tindakan selama jangka waktu tertentu. Dalam fitur pencarian berbasis AJAX, hal ini berarti permintaan pencarian baru dikirim setelah pengguna berhenti mengetik selama jeda waktu singkat. Hal ini penting karena tanpa debouncing, setiap penekanan tombol dapat memicu permintaan AJAX baru. Sebagai contoh, mengetik kata "Python" bisa saja mengirimkan enam permintaan terpisah. Debouncing mengurangi permintaan yang tidak perlu, menurunkan beban kerja server, serta menjadikan fitur pencarian lebih efisien.
+
+### 2. Jelaskan fungsi dari penggunaan `await` ketika kita menggunakan `fetch()`! Apa yang akan terjadi jika kita tidak menggunakan `await`?
+
+`await` digunakan untuk menunggu selesainya sebuah Promise sebelum melanjutkan ke baris kode berikutnya. Karena `fetch()` mengembalikan sebuah Promise, penggunaan `await fetch()` memungkinkan kita menunggu hingga server memberikan respons sebelum memproses respons tersebut.
+
+Jika kita tidak menggunakan `await`, eksekusi kode akan langsung berlanjut sementara permintaan masih diproses. Akibatnya, kita akan mendapatkan Promise, bukan data respons yang sebenarnya, ini berarti kita tidak dapat mengakses data respons atau JSON secara langsung sebagaimana mestinya. Kita harus menangani Promise tersebut menggunakan `.then()` atau pendekatan asinkron lainnya.
+
+### 3. Jelaskan apa itu serangan XSS dan mengapa data yang ditampilkan melalui AJAX/JavaScript lebih rentan terhadap serangan ini daripada data yang ditampilkan langsung melalui template Django!
+
+XSS, atau *Cross-Site Scripting*, adalah serangan keamanan di mana penyerang menyisipkan kode JavaScript atau HTML berbahaya ke dalam data yang nantinya ditampilkan kepada pengguna lain. Jika aplikasi menyisipkan data ini ke dalam halaman sebagai HTML tanpa melakukan *escaping* dengan benar, browser dapat menafsirkan kode berbahaya tersebut dan mengeksekusinya. Data yang ditampilkan melalui AJAX/JavaScript lebih rentan karena JavaScript sering kali membuat elemen HTML secara dinamis menggunakan nilai yang diterima dari server. Jika nilai-nilai tersebut disisipkan langsung ke dalam HTML tanpa melakukan *escaping* terlebih dahulu, konten yang dikendalikan pengguna dapat berubah menjadi HTML atau JavaScript yang dapat dieksekusi. Template Django memberikan perlindungan dengan melakukan *escaping* otomatis pada variabel saat dirender secara normal.
 
 ## AI Disclosure
 
