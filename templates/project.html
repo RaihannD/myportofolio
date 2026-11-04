@@ -14,6 +14,7 @@
                     <!-- Limits add project to superusers only -->
                     {% if user.is_superuser %}
                         <button type="button"
+                                id="add-project-button"
                                 class="button project-add-button"
                                 popovertarget="add-project-modal">
                             <span aria-hidden="true">+</span>
@@ -73,6 +74,9 @@
     const searchForm = document.getElementById('project-search-form');
     const searchInput = document.getElementById('search-input');
     const projectForm = document.getElementById('project-form');
+    const projectModalTitle = document.getElementById('add-project-modal-title');
+    const projectSubmitButton = projectForm?.querySelector('button[type="submit"]');
+    let editingProjectId = null;
     let projectsAbortController;
     let searchDebounceTimer;
 
@@ -107,7 +111,11 @@
         const image = project.image
             ? `<img src="${escapeHtml(project.image)}" alt="Gambar ${escapeHtml(project.title)}" class="project-image">` : '';
         const link = project.project_url
-            ? `<a href="${escapeHtml(project.project_url)}" class="button" target="_blank" rel="noopener noreferrer">Open project</a>` : '';
+            ? `<a href="${escapeHtml(project.project_url)}" class="button" target="_blank" rel="noopener noreferrer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
+                    </svg>
+                </a>` : '';
         const star = IS_AUTHENTICATED
             ? `<button type="button" class="button button-star${project.is_starred ? ' is-starred' : ''}"
                 data-action="star" data-id="${escapeHtml(project.id)}"
@@ -116,12 +124,24 @@
             : `<a href="{% url 'main:login' %}" class="button">Login to star (${project.star_count})</a>`;
         const remove = IS_SUPERUSER
             ? `<button type="button" class="button button-danger" data-action="delete"
-                data-id="${escapeHtml(project.id)}">Delete</button>` : '';
+                data-id="${escapeHtml(project.id)}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                    </svg>
+                </button>` : '';
+        const edit = IS_SUPERUSER
+            ? `<button type="button" class="button" data-action="edit"
+                data-id="${escapeHtml(project.id)}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                    </svg>
+                </button>` : '';
         article.innerHTML = `${image}<h2>${escapeHtml(project.title)}</h2>
             <span class="tech-stack">${escapeHtml(project.tech_stack)}</span>
             <p class="project-description">${escapeHtml(project.description)}</p>
             <div class="project-card-actions"><div class="project-links">
-            ${link}${star}${remove}</div></div>`;
+            ${link}${star}${edit}${remove}</div></div>`;
         return article;
     }
 
@@ -176,12 +196,19 @@
         try {
             const fields = new FormData(projectForm);
             const payload = Object.fromEntries([
-                'title', 'description', 'tech_stack', 'project_url', 'image',
+                'title', 'description', 'tech_stack', 'project_url', 'image', 'live_demo',
             ].map(name => [name, fields.get(name)]));
-            await writeProject(BASE_PROJECTS_ENDPOINT, 'POST', payload);
+            const isEditing = editingProjectId !== null;
+            const endpoint = isEditing
+                ? projectEndpoint(DETAIL_PROJECT_ENDPOINT, editingProjectId)
+                : BASE_PROJECTS_ENDPOINT;
+            await writeProject(endpoint, isEditing ? 'PATCH' : 'POST', payload);
             projectForm.reset();
+            editingProjectId = null;
             document.getElementById('add-project-modal').hidePopover();
-            showToast('Success', 'Project created.', 'success');
+            projectModalTitle.textContent = 'Tambah Proyek Baru';
+            projectSubmitButton.textContent = 'Tambah Proyek';
+            showToast('Success', isEditing ? 'Project updated.' : 'Project created.', 'success');
             await fetchProjects(searchInput.value.trim());
         } catch (error) {
             showToast('Could not create project', error.message, 'error');
@@ -192,10 +219,47 @@
 
     if (projectForm) projectForm.addEventListener('submit', addProject);
 
+    const addProjectButton = document.getElementById('add-project-button');
+    if (addProjectButton && projectForm) {
+        addProjectButton.addEventListener('click', function() {
+            projectForm.reset();
+            editingProjectId = null;
+            projectModalTitle.textContent = 'Tambah Proyek Baru';
+            projectSubmitButton.textContent = 'Tambah Proyek';
+        });
+    }
+
+    async function editProject(projectId, trigger) {
+        if (!IS_SUPERUSER || !projectForm) return;
+        trigger.disabled = true;
+        try {
+            const response = await fetch(projectEndpoint(DETAIL_PROJECT_ENDPOINT, projectId), {
+                headers: { Accept: 'application/json' },
+            });
+            const project = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(apiErrorMessage(project, response.status));
+            for (const field of ['title', 'description', 'tech_stack', 'project_url', 'image', 'live_demo']) {
+                projectForm.elements.namedItem(field).value = project[field] || '';
+            }
+            editingProjectId = project.id;
+            projectModalTitle.textContent = 'Edit Project';
+            projectSubmitButton.textContent = 'Save Changes';
+            document.getElementById('add-project-modal').showPopover();
+        } catch (error) {
+            showToast('Could not load project', error.message, 'error');
+        } finally {
+            trigger.disabled = false;
+        }
+    }
+
     gridContainer.addEventListener('click', async function(event) {
         const button = event.target.closest('button[data-action]');
         if (!button || button.disabled) return;
         const action = button.dataset.action;
+        if (action === 'edit') {
+            await editProject(button.dataset.id, button);
+            return;
+        }
         if (action === 'delete' && !window.confirm('Delete this project?')) return;
         button.disabled = true;
         try {

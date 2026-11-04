@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 from main.models import Experience, Project
 
@@ -85,6 +86,20 @@ class ProjectTest(TestCase):
         
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "project.html")
+
+    def test_project_edit_controls_are_superuser_only(self):
+        response = self.client.get(reverse("main:show_projects"))
+        self.assertContains(response, 'const IS_SUPERUSER = "false" === "true";')
+        self.assertNotContains(response, 'id="add-project-button"')
+
+        owner = User.objects.create_superuser(
+            username="portfolio-owner", email="owner@example.com", password="test-password",
+        )
+        self.client.force_login(owner)
+        response = self.client.get(reverse("main:show_projects"))
+        self.assertContains(response, 'const IS_SUPERUSER = "true" === "true";')
+        self.assertContains(response, 'id="add-project-button"')
+        self.assertContains(response, "const edit = IS_SUPERUSER")
 
     # Test that the Project model's string representation returns its title.
     def test_project_model(self):

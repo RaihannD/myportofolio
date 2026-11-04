@@ -26,7 +26,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = [
             "id", "title", "description", "tech_stack",
-            "project_url", "image",
+            "project_url", "image", "live_demo",
             "star_count", "is_starred", "starred_by_names",
         ]
         read_only_fields = ["id"]
