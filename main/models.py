@@ -30,6 +30,7 @@ class Experience(models.Model):
 
 class Project(models.Model):
     """Store information about a portfolio project."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     description = models.TextField()
     tech_stack = models.CharField(max_length=255)
