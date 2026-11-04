@@ -36,26 +36,36 @@ class MainTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "experience.html")
-        self.assertContains(response, self.experience.title)
-        self.assertContains(response, self.experience.description)
-        self.assertContains(response, "Part-Time")
-        self.assertContains(response, "Sedang berlangsung")
+        self.assertContains(response, reverse("main:get_experience_json"))
         self.assertContains(response, f'href="{reverse("main:show_main")}"')
+
+    def test_experience_api_returns_experience_data(self):
+        response = self.client.get(reverse("main:get_experience_json"))
+
+        self.assertEqual(response.status_code, 200)
+        experience = response.json()[0]
+        self.assertEqual(experience["pk"], str(self.experience.id))
+        self.assertEqual(experience["fields"]["title"], self.experience.title)
+        self.assertEqual(experience["fields"]["description"], self.experience.description)
+        self.assertEqual(experience["fields"]["category_display"], "Part-Time")
+        self.assertTrue(experience["fields"]["is_ongoing"])
 
     def test_empty_experience_page(self):
         Experience.objects.all().delete()
-        response = self.client.get(reverse("main:show_experience"))
+        response = self.client.get(reverse("main:get_experience_json"))
 
-        self.assertContains(response, "Belum ada pengalaman yang ditambahkan.")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [])
 
     def test_completed_experience(self):
         self.experience.ended_at = timezone.now()
         self.experience.save()
-        response = self.client.get(reverse("main:show_experience"))
+        response = self.client.get(reverse("main:get_experience_json"))
 
         self.assertFalse(self.experience.is_ongoing)
-        self.assertContains(response, "Selesai")
-        self.assertNotContains(response, "Sedang berlangsung")
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.json()[0]["fields"]["is_ongoing"])
+        self.assertIsNotNone(response.json()[0]["fields"]["ended_at"])
 
 class ProjectTest(TestCase):
     # Create a sample Project object that will be used by the tests.
@@ -80,20 +90,37 @@ class ProjectTest(TestCase):
     def test_project_model(self):
         self.assertEqual(str(self.project), "Website Portofolio")
 
-    # Test that Project data is displayed correctly on the Project page.
+    # Project data is fetched by JavaScript from the API after the page renders.
     def test_project_page(self):
         response = self.client.get(reverse("main:show_projects"))
     
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "project.html")
-        self.assertContains(response, self.project.title)
-        self.assertContains(response, self.project.description)
-        self.assertContains(response, self.project.image)
+        self.assertContains(response, reverse("api:project-list"))
+        self.assertContains(response, 'article.className = \'project-card\'')
         self.assertContains(response, f'href="{reverse("main:show_main")}"')
 
-    # Test that the empty-state message is displayed when no Projects exist.
-    def test_empty_project_page(self):
+    def test_project_api_returns_project_data(self):
+        response = self.client.get(reverse("api:project-list"))
+
+        self.assertEqual(response.status_code, 200)
+        project = response.json()[0]
+        self.assertEqual(project["id"], str(self.project.id))
+        self.assertEqual(project["title"], self.project.title)
+        self.assertEqual(project["description"], self.project.description)
+        self.assertEqual(project["image"], self.project.image)
+        self.assertEqual(project["star_count"], 0)
+        self.assertFalse(project["is_starred"])
+
+    def test_project_api_filters_by_title(self):
+        response = self.client.get(reverse("api:project-list"), {"title": "Website"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual([project["id"] for project in response.json()], [str(self.project.id)])
+
+    def test_empty_project_api_returns_empty_list(self):
         Project.objects.all().delete()
-        response = self.client.get(reverse("main:show_projects"))
-    
-        self.assertContains(response, "Belum ada proyek yang ditambahkan.")
+        response = self.client.get(reverse("api:project-list"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [])
