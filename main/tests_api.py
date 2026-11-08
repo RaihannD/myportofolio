@@ -86,6 +86,14 @@ class ExperienceAPITest(APITestCase):
         self.experience.refresh_from_db()
         self.assertEqual(self.experience.title, "Research assistant")
 
+    def test_anonymous_user_cannot_write_experience(self):
+        self.assertEqual(self.client.post(self.list_url, self.payload, format="json").status_code, 403)
+        self.assertEqual(self.client.patch(self.detail_url, {"title": "Nope"}, format="json").status_code, 403)
+        self.assertEqual(self.client.delete(self.detail_url).status_code, 403)
+        self.assertEqual(Experience.objects.count(), 1)
+        self.experience.refresh_from_db()
+        self.assertEqual(self.experience.title, "Research assistant")
+
     def test_owner_can_create_and_delete(self):
         self.client.force_authenticate(user=self.owner)
         create_response = self.client.post(self.list_url, self.payload, format="json")
@@ -105,6 +113,37 @@ class ExperienceAPITest(APITestCase):
         self.assertEqual(self.client.options(self.detail_url).status_code, status.HTTP_200_OK)
         self.experience.refresh_from_db()
         self.assertEqual(self.experience.title, before)
+        self.assertEqual(Experience.objects.count(), 1)
+
+    def test_experience_search_validation_and_missing_detail(self):
+        self.assertEqual(len(self.client.get(self.list_url, {"title": "RESEARCH"}).data), 1)
+        self.assertEqual(self.client.get(reverse("api:experience-detail", args=[uuid.uuid4()])).status_code, 404)
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.post(self.list_url, {**self.payload, "title": "<b>  </b>"}, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(Experience.objects.count(), 1)
+        response = self.client.post(self.list_url, {**self.payload, "title": "<b>Clean</b>", "description": "<p>Text</p>"}, format="json")
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["title"], "Clean")
+        self.assertEqual(response.data["description"], "Text")
+
+    def test_experience_star_requires_login_and_toggles(self):
+        url = reverse("api:experience-star", args=[self.experience.id])
+        self.assertEqual(self.client.post(url).status_code, 403)
+        self.assertEqual(self.experience.starred_by.count(), 0)
+        self.client.force_authenticate(user=self.visitor)
+        response = self.client.post(url)
+        self.assertTrue(response.data["is_starred"])
+        self.assertEqual(response.data["star_count"], 1)
+        response = self.client.post(url)
+        self.assertFalse(response.data["is_starred"])
+        self.assertEqual(response.data["star_count"], 0)
+
+    def test_experience_session_write_without_csrf_is_rejected(self):
+        client = APIClient(enforce_csrf_checks=True)
+        self.assertTrue(client.login(username="experience-owner", password="test-password"))
+        response = client.post(self.list_url, self.payload, format="json")
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(Experience.objects.count(), 1)
 
 
