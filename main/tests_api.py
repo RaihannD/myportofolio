@@ -245,13 +245,21 @@ class ProjectAPITest(APITestCase):
         self.assertEqual(response.data["star_count"], 0)
         self.assertFalse(response.data["is_starred"])
 
-    def test_staff_and_editor_cannot_manage_tutorial_projects(self):
-        self.visitor.is_staff = True
-        self.visitor.save()
+    def test_editor_can_edit_but_cannot_create_or_delete_projects(self):
         self.visitor.groups.add(Group.objects.create(name="Editor"))
         self.client.force_authenticate(user=self.visitor)
         response = self.client.patch(self.detail_url, {"title": "Changed"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.project.refresh_from_db()
+        self.assertEqual(self.project.title, "Changed")
+        response = self.client.put(self.detail_url, self.payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.post(self.list_url, self.payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        response = self.client.delete(self.detail_url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Project.objects.count(), 1)
+        self.assertTrue(Project.objects.filter(pk=self.project.pk).exists())
 
     def test_wrong_method(self):
         self.client.force_authenticate(user=self.owner)
