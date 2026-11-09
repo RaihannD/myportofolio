@@ -13,37 +13,60 @@ myportofolio/
 │   ├── migrations/
 │   │   ├── 0001_initial.py
 │   │   ├── 0002_project.py
-│   │   └── ...
+│   │   ├── 0003_project_tech_stack_alter_project_image_and_more.py
+│   │   ├── 0004_project_starred_by.py
+│   │   ├── 0005_project_uuid.py
+│   │   └── 0006_experience_starred_by.py
 │   ├── admin.py
 │   ├── apps.py
+│   ├── api_urls.py
+│   ├── api_views.py
 │   ├── forms.py
 │   ├── models.py
+│   ├── permissions.py
+│   ├── serializers.py
 │   ├── tests.py
+│   ├── tests_api.py
 │   ├── urls.py
 │   └── views.py
 ├── portofolio/
+│   ├── asgi.py
 │   ├── settings.py
 │   ├── urls.py
+│   ├── views.py
 │   ├── wsgi.py
-│   └── ...
+│   └── __init__.py
 ├── templates/
 │   ├── components/
-│   │   └── project_delete_modal.html
-│   │   └── experience_delete_modal.html
+│   │   ├── experience_delete_modal.html
+│   │   ├── experience_form_modal.html
+│   │   ├── project_delete_modal.html
+│   │   ├── project_form_modal.html
+│   │   ├── project_star.html
+│   │   └── toast.html
 │   ├── base.html
-│   ├── index.html
 │   ├── experience.html
 │   ├── experience_form.html
+│   ├── index.html
+│   ├── login.html
 │   ├── project.html
-│   └── ...
+│   ├── projects_form.html
+│   └── register.html
 ├── static/
 │   ├── css/
 │   │   └── style.css
-│   └── img/
+│   ├── img/
+│   │   ├── CSS3.png
+│   │   ├── github.png
+│   │   ├── HTML5.png
+│   │   ├── java.png
+│   │   ├── Python.svg
+│   │   └── raihan.jpeg
+│   └── js/
+│       └── toast.js
 ├── manage.py
 ├── requirements.txt
 └── README.md
-...
 ```
 ## Setup
 
@@ -170,6 +193,24 @@ Website tersebut kemudian dapat diakses melalui *local development server*.
 * Menerapkan notifikasi toast
 * Melindungi aplikasi dari XSS
 
+### Tutorial 07
+* Mengimplementasi *serializer* untuk *projects*
+* Mengimplementasi API daftar dan tambah
+* Mengimplementasi API detail, update, delete
+* Mengimpelemtasi API star untuk *projects*
+* Mengintegrasi API dengan AJAX
+
+### Tugas 06
+
+* Menambahkan `ExperienceSerializer` dengan daftar field eksplisit, validasi teks, serta informasi jumlah dan status *star*.
+* Menambahkan relasi *star* pada model `Experience` beserta migrasinya.
+* Membuat API Experience untuk daftar, pencarian, tambah, detail, edit, hapus, dan *star* di bawah prefix `/api/v1/`.
+* Menerapkan hak akses API Experience untuk pengunjung, pengguna biasa, Editor, dan pemilik portofolio.
+* Mengintegrasikan API dengan AJAX
+* Mengimplementasi *permission class* untuk otorisasi
+* Menambahkan pengujian API Experience untuk hak akses, validasi, *star*, data yang tidak ditemukan, dan CSRF.
+* Mengizinkan Editor mengubah data *projects* melalui API dan modal pada halaman Projects, sementara pembuatan dan penghapusan tetap khusus pemilik portofolio.
+
 ## Pertanyaan Reflektif
 
 ## Tugas 1
@@ -262,6 +303,32 @@ Jika kita tidak menggunakan `await`, eksekusi kode akan langsung berlanjut semen
 ### 3. Jelaskan apa itu serangan XSS dan mengapa data yang ditampilkan melalui AJAX/JavaScript lebih rentan terhadap serangan ini daripada data yang ditampilkan langsung melalui template Django!
 
 XSS, atau *Cross-Site Scripting*, adalah serangan keamanan di mana penyerang menyisipkan kode JavaScript atau HTML berbahaya ke dalam data yang nantinya ditampilkan kepada pengguna lain. Jika aplikasi menyisipkan data ini ke dalam halaman sebagai HTML tanpa melakukan *escaping* dengan benar, browser dapat menafsirkan kode berbahaya tersebut dan mengeksekusinya. Data yang ditampilkan melalui AJAX/JavaScript lebih rentan karena JavaScript sering kali membuat elemen HTML secara dinamis menggunakan nilai yang diterima dari server. Jika nilai-nilai tersebut disisipkan langsung ke dalam HTML tanpa melakukan *escaping* terlebih dahulu, konten yang dikendalikan pengguna dapat berubah menjadi HTML atau JavaScript yang dapat dieksekusi. Template Django memberikan perlindungan dengan melakukan *escaping* otomatis pada variabel saat dirender secara normal.
+
+## Tugas 6
+
+### 1. Jelaskan apa yang dimaksud dengan REST dan mengapa mengembalikan JSON saja belum cukup untuk menyebut sebuah API sebagai RESTful! Jelaskan pula perbedaan `PUT` dan `PATCH` beserta contoh kapan masing-masing sebaiknya digunakan!
+
+REST (*Representational State Transfer*) adalah gaya arsitektur untuk merancang komunikasi antara sistem melalui resource. Dalam API REST, resource dikenali melalui URL, lalu diakses atau diubah menggunakan metode HTTP seperti `GET`, `POST`, `PUT`, `PATCH`, dan `DELETE`. Mengembalikan JSON saja belum membuat API menjadi RESTful karena JSON hanya format representasi data. API juga perlu menggunakan resource dan metode HTTP dengan makna yang sesuai, mengembalikan status HTTP yang tepat, serta menjaga komunikasi tetap stateless.
+
+`PUT` digunakan untuk mengganti representasi resource dengan data yang dikirim, sehingga klien biasanya mengirim semua field yang diwajibkan. Contohnya, memperbarui seluruh informasi proyek melalui `PUT /api/v1/projects/<id>/`. `PATCH` digunakan untuk memperbarui sebagian field saja, misalnya hanya mengubah judul proyek dengan `PATCH` ke URL yang sama.
+
+### 2. Jelaskan peran *serializer* pada Django REST Framework! Apa keuntungannya dibandingkan merakit *dictionary* secara manual dengan `JsonResponse` seperti pada Tutorial 05?
+
+*Serializer* pada Django REST Framework mengubah objek model atau queryset menjadi representasi data yang dapat dikirim melalui API, misalnya JSON. Serializer juga mengubah input dari request menjadi nilai Python yang dapat digunakan untuk membuat atau memperbarui model, sekaligus memvalidasi input sebelum data disimpan.
+
+Dibandingkan merakit *dictionary* secara manual dengan `JsonResponse` seperti pada Tutorial 05, `ModelSerializer` mengurangi kode berulang karena field dapat dipetakan dari model. Serializer menyediakan validasi yang konsisten dan mendukung proses pembuatan serta pembaruan data. Kita juga dapat menentukan field yang boleh ditampilkan atau diubah sehingga data sensitif tidak ikut terekspos.
+
+### 3. Jelaskan perbedaan autentikasi dan otorisasi pada Django REST Framework! Mengapa hak akses harus diperiksa dengan *permission class* di server, bukan hanya dengan menyembunyikan tombol di *template*?
+
+Autentikasi memeriksa identitas pengguna, misalnya memastikan pengguna sudah masuk menggunakan sesi. Otorisasi menentukan tindakan apa yang boleh dilakukan oleh pengguna tersebut. Di DRF, autentikasi dijalankan oleh *authentication class*, sedangkan hak tindakan diperiksa dengan *permission class*.
+
+Pemeriksaan izin harus dilakukan di server karena pengguna dapat memanggil endpoint secara langsung tanpa menggunakan halaman atau tombol yang disediakan aplikasi. Menyembunyikan tombol pada template hanya mengatur tampilan, hal itu tidak mencegah request langsung ke API. *Permission class* memastikan setiap request tetap diperiksa berdasarkan peran pengguna.
+
+### 4. Jelaskan mengapa permintaan yang mengubah data tetap memerlukan token CSRF ketika API memakai `SessionAuthentication`! Mengapa *test* yang memakai `force_authenticate` tidak cukup untuk membuktikan bahwa perlindungan CSRF berjalan?
+
+`SessionAuthentication` menggunakan cookie sesi yang otomatis dikirim browser. Karena browser dapat mengirim cookie tersebut tanpa tindakan eksplisit pengguna, situs lain berpotensi mencoba mengirim request atas nama pengguna yang sedang masuk. Token CSRF membantu memastikan bahwa request yang mengubah data berasal dari halaman aplikasi yang benar. Karena itu, request seperti `POST`, `PUT`, `PATCH`, dan `DELETE` perlu menyertakan token CSRF yang valid.
+
+`force_authenticate` langsung menetapkan pengguna pada request pengujian, sehingga melewati proses login dan pemeriksaan CSRF yang terjadi pada autentikasi sesi. Maka, test dengan `force_authenticate` dapat menguji permission, tetapi tidak membuktikan perlindungan CSRF berjalan. Untuk menguji CSRF, gunakan `APIClient(enforce_csrf_checks=True)`, lakukan login dengan `.login()`, lalu periksa bahwa request tanpa token ditolak.
 
 ## AI Disclosure
 
